@@ -43,9 +43,14 @@ func main() {
 				},*/
 		cli.DurationFlag{
 			Name:   "poll-interval,i",
-			Value:  30 * time.Second,
+			Value:  5 * time.Second,
 			Usage:  "Polling interval for checks",
 			EnvVar: "POLL_INTERVAL",
+		},
+		cli.StringFlag{
+			Name:   "arn,a",
+			Usage:  "AWS Role ARN",
+			EnvVar: "ARN",
 		},
 	}
 	app.Run(os.Args)
@@ -58,6 +63,6 @@ func start(c *cli.Context) {
 	if c.String("aws-secret") == "" {
 		log.Fatal("AWS Secret Key required")
 	}*/
-	a := agent.NewAgent(c.Duration("polling-interval"))
+	a := agent.NewAgent(c.Duration("poll-interval"), c.String("arn"))
 	a.Start()
 }

@@ -1,2 +1,0 @@
-FROM ds-remove:HEAD
-COPY . /go/src/github.com/rancher/ds-remove/
