@@ -9,7 +9,7 @@ import (
 )
 
 //Function to terminate an instance
-func terminateInstance(instanceID string, s session.Session, c aws.Config) bool {
+func terminateInstance(instanceID string, s *session.Session, c *aws.Config) bool {
 	svc := ec2.New(s, c)
 	resp, err := svc.TerminateInstances(&ec2.TerminateInstancesInput{InstanceIds: []*string{aws.String(instanceID)}})
 	if err != nil {
