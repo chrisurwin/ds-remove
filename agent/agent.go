@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"sync"
+	"syscall"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -27,6 +30,8 @@ const (
 
 func NewAgent(probePeriod time.Duration, arn string) *Agent {
 	region := getAWSInfo("/latest/meta-data/placement/availability-zone")
+	region = region[:len(region)-1]
+	fmt.Print(region)
 	sess, _ := session.NewSession()
 
 	var c = &aws.Config{Region: aws.String(region)}
@@ -60,8 +65,8 @@ func (a *Agent) Start() {
 }
 
 func (a *Agent) checkDiskSpace() {
-	fmt.Print("Checking diskspace... ")
-	/*var stat syscall.Statfs_t
+	log.Info("Checking diskspace... ")
+	var stat syscall.Statfs_t
 
 	wd, _ := os.Getwd()
 
@@ -69,13 +74,18 @@ func (a *Agent) checkDiskSpace() {
 
 	// Available blocks * size per block = available space in bytes
 	var free = stat.Bfree * uint64(stat.Bsize)
-	if free > 10000000000 {
-		fmt.Println("plenty free")
+	if free > 50000000 {
+		log.Info("Disk Space check passed..")
 	} else {
-		fmt.Println("disk full")
-	}*/
-	var i = getAWSInfo("/latest/meta-data/instance-id")
-	var r bool = terminateInstance(i)
+		log.Error("disk full")
+		/*var i = getAWSInfo("/latest/meta-data/instance-id")
+		var r bool = awsfunctions.TerminateInstance(i, a.awsSession, a.awsConfig)
+		if r == true {
+			log.Info("Termination initiated")
+		} else {
+			log.Error("Terminateion failed")
+		}*/
+	}
 
 }
 
